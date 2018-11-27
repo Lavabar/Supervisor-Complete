@@ -141,7 +141,7 @@ def undistortion(image):
             print(st_model)
     
     copy_image = np.copy(image)
-    cv2.namedWindow("image")
+    cv2.namedWindow("image", cv2.WINDOW_NORMAL)
     cv2.setMouseCallback("image", get_coords)
     # beginning process of choosing points on image
     # lighting first point
@@ -162,9 +162,9 @@ def undistortion(image):
     st_dev = standard_dev(lines)
     print("st_dev:")
     print(st_dev)
-    if st_dev < 1.3:
+    if st_dev < 0.3:
         return 0.0
-    strengths = [i/10 for i in range(0, 18, 2)]
+    strengths = [i/30 for i in range(1, 18, 2)]
     for strength in strengths:
         new_image, refPt = update_points(image, refPt, strength=strength, zoom=1.0)
         refPt = np.int32(refPt)
@@ -172,7 +172,7 @@ def undistortion(image):
         lines = make_lines_bypoints(refPt)
         st_dev = standard_dev(lines)
         print(st_dev)
-        if st_dev < 1.3:
+        if st_dev < 0.3:
             return strength
 
     return 0.0
