@@ -4,7 +4,7 @@ import numpy as np
 import imutils
 
 # importing main modules
-calibrate = __import__("1_calibration_v1")
+calibrate = __import__("1_calibration_v2")
 bgext = __import__("2_bg_extractor_v1")
 yolo = __import__("3_object_detection_v1")
 
@@ -21,10 +21,10 @@ else:
 
 #bg = imutils.resize(bg, height=1080)
 # calibrating camera
-strength = calibrate.undistortion(bg)
-zoom = 1.0
+params = calibrate.undistortion(bg)
+
 # image undistorion
-bg = calibrate.proc(bg, strength, zoom)
+bg = calibrate.proc(bg, params)
 bg = cv2.cvtColor(bg, cv2.COLOR_BGR2GRAY)
 
 # parameters for background extraction
@@ -35,7 +35,7 @@ bgext.stats = np.zeros((bgext.img_h, bgext.img_w, bgext.color_size))
 # start of videostream
 while cap.isOpened():
     ret, img = cap.read()
-    img = calibrate.proc(img, strength, zoom)
+    img = calibrate.proc(img, params)
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     bg = bgext.update_bg(gray, bg)
 

@@ -42,7 +42,10 @@ def update_points(img, refPt, strength=0.1, zoom=1.0):
     return dest_img, res_refPt
 
 # just transform image
-def proc(img, strength, zoom):
+def proc(img, params):
+    strength = params[0]
+    zoom = params[1]
+
     if strength == 0.0:
         return img
     dest_img = np.zeros(img.shape, dtype=np.uint8)
@@ -162,8 +165,8 @@ def undistortion(image):
     st_dev = standard_dev(lines)
     print("st_dev:")
     print(st_dev)
-    if st_dev < 0.3:
-        return 0.0
+    if st_dev <= 1.0:
+        return (0.0, 1.0)
     strengths = [i/30 for i in range(1, 18, 2)]
     for strength in strengths:
         new_image, refPt = update_points(image, refPt, strength=strength, zoom=1.0)
@@ -172,10 +175,10 @@ def undistortion(image):
         lines = make_lines_bypoints(refPt)
         st_dev = standard_dev(lines)
         print(st_dev)
-        if st_dev < 0.3:
-            return strength
+        if st_dev <= 1.0:
+            return (strength, 1.0)
 
-    return 0.0
+    return (0.0, 1.0)
 
 if __name__ == "__main__":
     path = "test_imgs/undist_test.jpg"
